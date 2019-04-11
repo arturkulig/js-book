@@ -80,6 +80,8 @@ $pink-light: #fa7ea8;
 $pink-lighter: #ffbbca;
 $pink-lightest: #ffebef;
 
+$shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.12), 0 2px 4px 0 rgba(0, 0, 0, 0.08);
+
 * {
   margin: 0;
   padding: 0;
@@ -136,8 +138,28 @@ div.md {
   hr.md + & {
     margin-top: 0;
   }
+  &.info,
+  &.warn,
+  &.error {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-left: -1rem;
+    margin-right: -1rem;
+    box-shadow: $shadow;
+  }
 
-  scroll-snap-align: center;
+  &.info {
+    background: $yellow-lightest;
+  }
+
+  &.warn {
+    background: $orange;
+  }
+
+  &.error {
+    background: $red;
+    font-weight: 700;
+  }
 }
 
 span.md {
@@ -208,13 +230,13 @@ code {
     background: $black;
     color: $white;
     border-radius: 0.5rem;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.12), 0 2px 4px 0 rgba(0, 0, 0, 0.08);
+    box-shadow: $shadow;
     white-space: pre;
   }
   &.code-inline {
     display: inline-block;
     padding: 0.5rem;
-    margin: 0 0.5rem;
+    margin: 0 0.25rem;
   }
   &.code-block {
     display: block;

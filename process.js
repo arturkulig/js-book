@@ -34,10 +34,15 @@ glob.sync(`${pwd}/**/*.md`).forEach(file => {
   // console.log(outContents);
 
   const fileContents = fs.readFileSync(file, { encoding: "utf-8" });
+  const parsed = markdown.parse(fileContents);
+  const converted = convert(parsed, file);
   const outContents = [
     h("section", { class: "md" }, ...crumbs(file)),
-    convert(markdown.parse(fileContents), file)
+    converted
   ].join("");
+  if ((fileContents.split("\n")[0] || "").toLowerCase() === "debug") {
+    console.log({ file, parsed, converted });
+  }
   const outFile = main(outContents);
 
   const outFilename = path.join(
@@ -70,6 +75,7 @@ function convert(md, file) {
     return md
       .replace(/\\(.)/g, "$1")
       .split("\n")
+      .filter(l => !!l)
       .join(h("br"));
   }
   const [type, ...opts] = md;
@@ -96,10 +102,23 @@ function convert(md, file) {
         return opts.length
           ? h(
               "div",
-              { class: "md" },
+              {
+                class: [
+                  "md",
+                  ...(typeof opts[0] === "string" && opts[0].startsWith("⚠️")
+                    ? ["warn"]
+                    : []),
+                  ...(typeof opts[0] === "string" && opts[0].startsWith("ℹ️")
+                    ? ["info"]
+                    : []),
+                  ...(typeof opts[0] === "string" && opts[0].startsWith("❌")
+                    ? ["error"]
+                    : [])
+                ].join(" ")
+              },
               ...opts.map(content =>
                 typeof content === "string"
-                  ? h("span", { class: "md" }, content)
+                  ? h("span", { class: "md" }, convert(content, file))
                   : convert(content, file)
               )
             )
