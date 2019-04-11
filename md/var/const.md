@@ -1,5 +1,7 @@
 # Constant points to only one value
 
+ℹ️ For simplicity sake both variables and constants are sometimes refered to as `variable`.
+
 Every constant you have to declare first.
 Unline variables, constants have to have a value right away.
 
@@ -20,3 +22,6 @@ Here there are two constants created containing the same value.
 const fruit = "apple";
 const anotherFruit = fruit;
 ```
+
+[#](./let/scope.md)
+[#](../operator/assignment.md)

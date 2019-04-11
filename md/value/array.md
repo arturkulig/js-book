@@ -6,7 +6,9 @@ This is an array of strings.
 ["orange", "apple", "grape"];
 ```
 
-Each item has a position, which we call an index. Index is a number. Indexes start with 0.
+Each item has a position, which we call an index.
+Index is a number.
+Indexes start with 0.
 
 ```javascript
 [

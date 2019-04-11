@@ -44,3 +44,4 @@ anotherFruit = "orange";
 ```
 
 [#](./scope.md)
+[#](../../operator/assignment.md)
