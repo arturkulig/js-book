@@ -1,4 +1,4 @@
-# ! reverses the value
+# `!` reverses the value
 
 This is `true`
 

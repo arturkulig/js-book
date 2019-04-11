@@ -1,4 +1,4 @@
-# + between numbers adds these numbers
+# `+` between numbers adds these numbers
 
 This equals `4`
 

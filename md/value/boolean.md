@@ -1,4 +1,4 @@
-# You can create boolean values
+# `True`/`false` are Boolean
 
 There are only two of them.
 

@@ -1,4 +1,4 @@
-# - between numbers subtracts one from the other
+# `-` between numbers subtracts one from the other
 
 This equals `3`
 

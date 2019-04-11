@@ -1,4 +1,4 @@
-# / between numbers divides one by the other
+# `/` between numbers divides one by the other
 
 This equals `2`
 
