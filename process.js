@@ -3,23 +3,39 @@ const glob = require("glob");
 const fs = require("fs");
 const path = require("path");
 const hljs = require("highlight.js/lib/highlight");
+const sass = require("node-sass");
 
 const unrecognized = [];
 
-const pwd = path.resolve(__dirname, "./md");
-const out = path.resolve(__dirname, "./html");
+const pwd = path.resolve(__dirname, "./md/");
+const out = path.resolve(__dirname, "./html/");
+
+fs.writeFileSync(
+  path.resolve(out, "./index.css"),
+  sass.renderSync({
+    file: path.resolve(pwd, "./index.scss")
+  }).css,
+  { encoding: "utf-8" }
+);
+
+fs.copyFileSync(
+  path.resolve(__dirname, "node_modules/highlight.js/styles/rainbow.css"),
+  path.resolve(out, "./code.css")
+);
 
 glob.sync(`${pwd}/**/*.md`).forEach(file => {
-  console.log("---------");
-  console.log(file);
+  // console.log("---------");
+  // console.log(file);
   // console.log("---");
   // console.log(tree);
   // console.log("---");
   // console.log(outContents);
 
   const fileContents = fs.readFileSync(file, { encoding: "utf-8" });
-  const tree = markdown.parse(fileContents);
-  const outContents = convert(tree, file);
+  const outContents = [
+    h("section", { class: "md" }, ...crumbs(file)),
+    convert(markdown.parse(fileContents), file)
+  ].join("");
   const outFile = main(outContents);
 
   const outFilename = path.join(
@@ -38,25 +54,10 @@ function main(contents) {
   return `
 <html>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css" rel="stylesheet">
-  <style>
-    * {
-      margin: 0; padding: 0; box-sizing: border-box;
-    }
-    html {
-      font-family: system-ui;
-    }
-  </style>
-  <style>
-    ${fs.readFileSync(
-      path.resolve(__dirname, "node_modules/highlight.js/styles/rainbow.css"),
-      { encoding: "utf-8" }
-    )}
-  </style>
-  <body class="flex flex-col items-center justify-center bg-yellow-light">
-    <div class="flex flex-col items-center max-w-5xl w-full p-8">
-      ${contents}
-    </div>  
+  <link href="/index.css" rel="stylesheet">
+  <link href="/code.css" rel="stylesheet">
+  <body>
+    ${contents}
   </body>
 </html>
   `;
@@ -70,11 +71,9 @@ function convert(md, file) {
   try {
     switch (type) {
       case "markdown":
-        const dirCrumbs = crumbs(file);
         return h(
-          "div",
-          { class: "w-full max-w-md" },
-          ...dirCrumbs,
+          "section",
+          { class: "md" },
           ...(opts || []).map(_ => convert(_, file)).filter(l => l != null)
         );
 
@@ -83,28 +82,23 @@ function convert(md, file) {
         return h(
           "h" + level.toString(),
           {
-            class: [
-              "text-black",
-              [
-                "(impossible)",
-                "mt-8 text-5xl",
-                "mt-6 text-4xl",
-                "mt-5 text-3xl",
-                "mt-4 text-2xl",
-                "mt-3 text-xl",
-                "mt-2 text-lg"
-              ][level]
-            ].join(" ")
+            class: "md"
           },
           convert(contents, file)
         );
 
       case "para":
-        return h(
-          "p",
-          { class: "mt-4 text-black" },
-          ...opts.map(_ => convert(_, file))
-        );
+        return opts.length
+          ? h(
+              "div",
+              { class: "md" },
+              ...opts.map(content =>
+                typeof content === "string"
+                  ? h("p", { class: "md" }, content)
+                  : convert(content, file)
+              )
+            )
+          : "";
 
       case "inlinecode":
         const lines = opts[0].split("\n").map(l => (l !== "//" ? l : ""));
@@ -135,10 +129,10 @@ function convert(md, file) {
         const [{ href }, title] = opts;
         return title === "#"
           ? createMDAnchor(file, href)
-          : h("a", { class: "text-blue-darkest", href }, title);
+          : h("a", { class: "md", href }, title);
 
       case "hr":
-        return h("hr", { class: "h-px bg-yellow-dark w-1/2 mx-auto my-8" });
+        return h("hr", { class: "md" });
 
       default:
         unrecognized.push([type, ...opts]);
@@ -156,7 +150,7 @@ function createCodeInline(code) {
   return h(
     "code",
     {
-      class: "inline bg-black text-white p-2 rounded shadow-md"
+      class: "code-inline"
     },
     code.split("\n").join(h("br"))
   );
@@ -169,16 +163,7 @@ function createCodeBlock(code) {
     h(
       "code",
       {
-        class: [
-          "block",
-          "bg-black",
-          "text-white",
-          "p-4",
-          "mt-4",
-          "rounded",
-          "shadow-md",
-          "overflow-x-auto"
-        ].join(" ")
+        class: "code-block"
       },
       code.split("\n").join(h("br"))
     )
@@ -202,23 +187,10 @@ function crumbs(file) {
     h(
       "a",
       {
-        class: [
-          "flex",
-          "content-center",
-          "flex-wrap",
-          "text-yellow-darkest",
-          // "border",
-          // "border-yellow-darkest",
-          "no-underline",
-          "h-10",
-          // "px-6",
-          ...(i > 0 ? ["border-t-0", "rounded-b"] : ["rounded"])
-        ].join(" "),
-        style: `margin-left: ${i}rem;
-                margin-right: ${i / 3}rem`,
+        class: `crumb crumb-${i}`,
         href: link.href
       },
-      h("span", { class: ["block"] }, i === 0 ? "🏠" : "↳", link.text)
+      link.text
     )
   );
 }
@@ -235,19 +207,7 @@ function createMDAnchor(from, to) {
   return h(
     "a",
     {
-      class: [
-        "outline-none",
-        "block",
-        "bg-yellow-darkest",
-        "hover:bg-blue-darker",
-        "focus:bg-blue-darker",
-        "text-yellow",
-        "hover:text-white",
-        "focus:text-white",
-        "no-underline",
-        "rounded",
-        "p-2"
-      ].join(" "),
+      class: "seeother",
       href: link.href
     },
     link.text

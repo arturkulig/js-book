@@ -5,12 +5,14 @@
   "main": "index.js",
   "scripts": {
     "build": "node ./process.js",
-    "dev": "concurrently -n process,http \"nodemon -e js,md ./process.js\" \"sleep 1; http-server ./html\""
+    "dev": "concurrently -n process,http \"nodemon -e js,md,scss ./process.js\" \"sleep 1; http-server ./html\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {},
+  "dependencies": {
+    "node-sass": "^4.11.0"
+  },
   "devDependencies": {
     "concurrently": "^4.1.0",
     "glob": "^7.1.3",
