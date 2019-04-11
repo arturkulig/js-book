@@ -1,8 +1,4 @@
-# You can create a collection of values (integer to value)
-
-Arrays are collection of values that remembers order of those items.
-
----
+# Arrays are collection of values labeled with an integer
 
 This is an array of strings.
 

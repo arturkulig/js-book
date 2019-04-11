@@ -1,4 +1,4 @@
-# In JS:
+# JS
 
 [#](./value/index.md)
 [#](./var/index.md)

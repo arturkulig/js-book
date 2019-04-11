@@ -97,7 +97,6 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   margin: 2rem;
 }
 
@@ -141,7 +140,7 @@ div.md {
   scroll-snap-align: center;
 }
 
-p.md {
+span.md {
   font-size: 1.2rem;
 }
 
@@ -152,10 +151,9 @@ a.md {
 
 a.crumb {
   display: flex;
-  align-content: center;
-  flex-wrap: wrap;
+  align-items: center;
   text-decoration: none;
-  height: 40px;
+  min-height: 40px;
   color: $yellow-darkest;
   @for $i from 0 through 10 {
     &-#{$i} {
@@ -208,16 +206,22 @@ code {
   &.code-block {
     background: $black;
     color: $white;
-    padding: 1rem;
     border-radius: 0.5rem;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.12), 0 2px 4px 0 rgba(0, 0, 0, 0.08);
+    white-space: pre;
   }
   &.code-inline {
     display: inline-block;
+    padding: 0.5rem;
   }
   &.code-block {
     display: block;
-    margin-top: 0.5rem;
+    padding: 1rem;
+    div.md > & {
+      margin-top: -0.5rem;
+    }
+    margin-left: -1rem;
+    margin-right: -1rem;
     overflow-x: auto;
   }
 }

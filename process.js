@@ -65,7 +65,10 @@ function main(contents) {
 
 function convert(md, file) {
   if (typeof md === "string") {
-    return md.split("\n").join(h("br"));
+    return md
+      .replace(/\\(.)/g, "$1")
+      .split("\n")
+      .join(h("br"));
   }
   const [type, ...opts] = md;
   try {
@@ -94,7 +97,7 @@ function convert(md, file) {
               { class: "md" },
               ...opts.map(content =>
                 typeof content === "string"
-                  ? h("p", { class: "md" }, content)
+                  ? h("span", { class: "md" }, content)
                   : convert(content, file)
               )
             )
@@ -123,7 +126,9 @@ function convert(md, file) {
           );
           return createCodeBlock(value);
         }
-        return createCodeBlock(lines.join(h("br")));
+        return createCodeBlock(
+          (lines[0] === "" ? lines.slice(1) : lines).join(h("br"))
+        );
 
       case "link":
         const [{ href }, title] = opts;
@@ -158,15 +163,11 @@ function createCodeInline(code) {
 
 function createCodeBlock(code) {
   return h(
-    "pre",
-    null,
-    h(
-      "code",
-      {
-        class: "code-block"
-      },
-      code.split("\n").join(h("br"))
-    )
+    "code",
+    {
+      class: "code-block"
+    },
+    code.split("\n").join(h("br"))
   );
 }
 
@@ -210,7 +211,7 @@ function createMDAnchor(from, to) {
       class: "seeother",
       href: link.href
     },
-    link.text
+    convert(link.text, from)
   );
 }
 

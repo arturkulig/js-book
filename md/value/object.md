@@ -1,4 +1,4 @@
-# You can create an object (string to value)
+# Objects are collection of values labeled with a text
 
 ---
 

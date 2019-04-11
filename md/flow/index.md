@@ -1,4 +1,4 @@
-# You can define what lines are executed
+# Define what lines are executed
 
 [#](./block.md)
 [#](./conditional/index.md)

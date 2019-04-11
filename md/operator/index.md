@@ -1,3 +1,8 @@
-# Special character in between values is a new value
+# Operators given values make a new value
 
-[#](./plus.md)
+[#](./concat.md)
+[#](./sum.md)
+[#](./subtract.md)
+[#](./division.md)
+[#](./multiplication.md)
+[#](./negation.md)

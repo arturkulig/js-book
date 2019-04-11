@@ -1,1 +1,1 @@
-# With functions, isolate and execute code on demand
+# Functions - isolate and execute code on demand

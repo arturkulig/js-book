@@ -1,4 +1,4 @@
-# You can create values
+# Create values
 
 Value is an information held in computers memory.
 

@@ -1,4 +1,4 @@
-# { } groups lines together to create a block
+# { } Braces group code to create a block
 
 A block is determined by braces.
 

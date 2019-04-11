@@ -1,1 +1,1 @@
-# With conditional statements, code can be run selectively
+# Conditional statements - code can be run selectively

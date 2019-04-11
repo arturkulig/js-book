@@ -1,1 +1,1 @@
-# With loops, code execution can be repeated
+# Loops - code execution can be repeated
