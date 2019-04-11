@@ -107,6 +107,7 @@ body {
   width: 100%;
   background: $black;
   position: sticky;
+  z-index: 2;
   top: 0;
   left: 0;
   right: 0;
@@ -125,6 +126,10 @@ body {
     &::-webkit-details-marker {
       display: none;
     }
+    &:focus {
+      background: $grey-darkest;
+    }
+
     &::before {
       display: flex;
       height: 44px;
@@ -134,9 +139,17 @@ body {
       justify-content: center;
       content: "◀";
     }
+    &__parent {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
   &[open] &__short {
     color: $grey-darkest;
+    &:focus {
+      color: $grey-darker;
+    }
     &::before {
       content: "▼";
     }
@@ -147,24 +160,39 @@ body {
     align-items: center;
     text-decoration: none;
     min-height: 44px;
+    padding: 0.5rem 0;
     color: $grey;
+    outline: none;
+    &:focus {
+      background: $grey-darkest;
+    }
+
+    &::before {
+      display: flex;
+      flex: 0 0 44px;
+      height: 44px;
+      width: 44px;
+      margin: -0.5rem 0;
+      align-items: center;
+      justify-content: center;
+      content: "⎆";
+      margin-right: 0.5rem;
+    }
+
     @for $i from 0 through 10 {
       &:nth-child(#{$i}) {
-        margin-left: #{($i - 2) / 2}rem;
+        padding-left: #{($i - 2) / 2}rem;
         //                 ^ first child is summary of details tag
-        &::before {
-          display: flex;
-          height: 44px;
-          width: 44px;
-          align-items: center;
-          justify-content: center;
-          content: "⎆";
-          margin-right: 0.5rem;
-        }
       }
     }
-    &:first-child::before {
+    &:nth-child(1)::before {
       content: "🏠";
+    }
+
+    &__label {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 }
@@ -176,6 +204,8 @@ section.md {
   width: 100%;
   max-width: 35rem;
   padding: 1rem 2rem;
+  position: relative;
+  z-index: 1;
 }
 
 @for $i from 1 through 6 {
@@ -231,10 +261,22 @@ div.md {
     background: $red;
     font-weight: 700;
   }
+
+  position: relative;
+  &:focus {
+    outline: none;
+    border: 0.25rem solid $yellow-lighter;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    margin: 1.25rem -0.75rem -0.75rem -0.75rem;
+  }
 }
 
-span.md {
+span.md,
+strong.md,
+em.md {
   font-size: 1.2rem;
+  line-height: 2rem;
 }
 
 a.md {
@@ -248,7 +290,7 @@ a.md {
   align-items: center;
   outline: none;
   text-decoration: none;
-  overflow: hidden;
+  border: 0.25rem solid $yellow-lighter;
   background: $yellow-lighter;
   color: $yellow-darker;
   border-radius: 0.6rem;
@@ -257,10 +299,9 @@ a.md {
     display: block;
     font-size: 1.2rem;
     margin: 1px;
-    padding: 0.5rem 1rem;
+    padding: 0.5rem;
     position: relative;
     z-index: 2;
-    margin-left: 0;
     border-radius: 0.5rem;
   }
 
@@ -268,38 +309,9 @@ a.md {
     margin-top: 1rem;
   }
 
-  &::before {
-    content: "⎆";
-    color: $yellow-dark;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 1rem;
-    width: 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-  }
-
-  &__label,
-  &::before {
-    transition: margin-left 100ms ease-in-out, left 100ms ease-in-out,
-      opacity 100ms ease-in-out;
-  }
-
   &:hover,
   &:focus {
-    color: $yellow-darkest;
-  }
-  &:hover &__label,
-  &:focus &__label {
-    margin-left: 1rem;
-  }
-  &:hover::before,
-  &:focus::before {
-    left: 0;
-    opacity: 1;
+    border-color: $yellow-darkest;
   }
 
   &:active {
@@ -331,12 +343,18 @@ code {
   }
   &.code-block {
     display: block;
-    padding: 1rem;
+    outline: none;
+    border: 0.25rem solid $black;
+    padding: 0.75rem;
     div.md > & {
       margin-top: -0.5rem;
     }
     margin-left: -1rem;
     margin-right: -1rem;
     overflow-x: auto;
+
+    &:focus {
+      border-color: $yellow-lightest;
+    }
   }
 }

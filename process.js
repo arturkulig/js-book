@@ -105,7 +105,8 @@ function convert(md, file) {
                   ...(typeof opts[0] === "string" && opts[0].startsWith("❌")
                     ? ["error"]
                     : [])
-                ].join(" ")
+                ].join(" "),
+                ...(typeof opts[0] === "string" ? { tabindex: "0" } : {})
               },
               ...opts.map(content =>
                 typeof content === "string"
@@ -151,6 +152,16 @@ function convert(md, file) {
       case "hr":
         return h("hr", { class: "md" });
 
+      case "strong":
+        return h(
+          "strong",
+          { class: "md" },
+          ...opts.map(opt => convert(opt, file))
+        );
+
+      case "em":
+        return h("em", { class: "md" }, ...opts.map(opt => convert(opt, file)));
+
       default:
         unrecognized.push([type, ...opts]);
         console.log("unrecognized token", type);
@@ -177,7 +188,8 @@ function createCodeBlock(code) {
   return h(
     "code",
     {
-      class: "code-block"
+      class: "code-block",
+      tabindex: "0"
     },
     code.split("\n").join(h("br"))
   );
@@ -204,7 +216,9 @@ function crumbs(file) {
       h(
         "summary",
         { class: "crumbs__short" },
-        parentsFromTopMost.map(link => link.text).join(" / ")
+        ...parentsFromTopMost
+          .slice(-1)
+          .map(link => h("span", { class: "crumbs__short__parent" }, link.text))
       ),
       ...parentsFromTopMost.map(link =>
         h(
@@ -213,7 +227,7 @@ function crumbs(file) {
             class: `crumbs__item`,
             href: link.href
           },
-          link.text
+          h("span", { class: "crumbs__item__label" }, link.text)
         )
       )
     );
