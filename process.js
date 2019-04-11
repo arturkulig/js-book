@@ -198,19 +198,29 @@ function crumbs(file) {
     }
     dir = path.resolve(dir, "..");
   }
-  return result
-    .reverse()
-    .map((link, i) =>
-      h(
-        "a",
-        { class: "block text-yellow-darkest no-underline", href: link.href },
-        ...Array.from(Array(i), () =>
-          h("span", { class: "inline-block w-4" }, "")
-        ),
-        i === 0 ? "🏠" : "↳",
-        link.text
-      )
-    );
+  return result.reverse().map((link, i) =>
+    h(
+      "a",
+      {
+        class: [
+          "flex",
+          "content-center",
+          "flex-wrap",
+          "text-yellow-darkest",
+          // "border",
+          // "border-yellow-darkest",
+          "no-underline",
+          "h-10",
+          // "px-6",
+          ...(i > 0 ? ["border-t-0", "rounded-b"] : ["rounded"])
+        ].join(" "),
+        style: `margin-left: ${i}rem;
+                margin-right: ${i / 3}rem`,
+        href: link.href
+      },
+      h("span", { class: ["block"] }, i === 0 ? "🏠" : "↳", link.text)
+    )
+  );
 }
 
 function createMDAnchor(from, to) {
