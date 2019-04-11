@@ -9,6 +9,6 @@ A block is determined by braces.
 }
 ```
 
-Flow control statements consist of blocks because they create a new scope.
+Flow control statements consist of blocks because they can control more than one line.
 
 [#](../var/let/scope.md)
