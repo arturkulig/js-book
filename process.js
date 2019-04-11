@@ -83,13 +83,13 @@ function convert(md, file) {
         );
 
       case "header":
-        const [{ level }, contents] = opts;
+        const [{ level }, ...contents] = opts;
         return h(
           "h" + level.toString(),
           {
             class: "md"
           },
-          convert(contents, file)
+          ...contents.map(content => convert(content, file))
         );
 
       case "para":
@@ -219,22 +219,29 @@ function createMDAnchor(from, to) {
 
 function getLink(from, to) {
   const targetPath = path.resolve(path.dirname(from), to);
-  try {
-    const targetContents = fs.readFileSync(targetPath, {
-      encoding: "utf-8"
-    });
-    const lines = targetContents.split("\n");
-    for (const line of lines) {
-      if (line[0] === "#") {
-        return {
-          href: path.join(path.dirname(to), path.basename(to, ".md") + ".html"),
-          text: line.match(/^#+(.*)$/)[1]
-        };
-      }
-    }
-  } catch (e) {
-    console.warn({ target: targetPath, from, to }, "not found");
+  // try {
+  const targetContents = markdown
+    .parse(
+      fs.readFileSync(targetPath, {
+        encoding: "utf-8"
+      })
+    )
+    .slice(1);
+  const header = targetContents.find(([type, ...opts]) => {
+    return type === "header" && opts[0].level === 1;
+  });
+  if (header) {
+    return {
+      href: path.join(path.dirname(to), path.basename(to, ".md") + ".html"),
+      text: header
+        .slice(2)
+        .map(_ => convert(_, from))
+        .join("")
+    };
   }
+  // } catch (e) {
+  // console.warn({ target: targetPath, from, to }, "not found");
+  // }
   return null;
 }
 
