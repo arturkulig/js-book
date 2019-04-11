@@ -10,6 +10,8 @@ const unrecognized = [];
 const pwd = path.resolve(__dirname, "./md/");
 const out = path.resolve(__dirname, "./html/");
 
+fs.mkdirSync(out, { recursive: true });
+
 fs.writeFileSync(
   path.resolve(out, "./index.css"),
   sass.renderSync({
