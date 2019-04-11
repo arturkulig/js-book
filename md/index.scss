@@ -81,6 +81,8 @@ $pink-lighter: #ffbbca;
 $pink-lightest: #ffebef;
 
 $shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.12), 0 2px 4px 0 rgba(0, 0, 0, 0.08);
+$inset-shadow: inset 0 4px 8px 0 rgba(0, 0, 0, 0.12),
+  inset 0 2px 4px 0 rgba(0, 0, 0, 0.08);
 
 * {
   margin: 0;
@@ -99,7 +101,70 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 2rem;
+}
+
+.crumbs {
+  width: 100%;
+  background: $black;
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  color: $grey;
+  min-height: 44px;
+
+  &__short {
+    display: flex;
+    align-items: center;
+    outline: none;
+    cursor: pointer;
+    &--empty {
+      display: none;
+    }
+    &::-webkit-details-marker {
+      display: none;
+    }
+    &::before {
+      display: flex;
+      height: 44px;
+      width: 44px;
+      align-items: center;
+      justify-content: center;
+      content: "◀";
+    }
+  }
+  &[open] &__short {
+    color: $grey-darkest;
+    &::before {
+      content: "▼";
+    }
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    min-height: 44px;
+    color: $grey;
+    @for $i from 0 through 10 {
+      &:nth-child(#{$i}) {
+        margin-left: #{($i - 2) / 2}rem;
+        //                 ^ first child is summary of details tag
+        &::before {
+          display: flex;
+          height: 44px;
+          width: 44px;
+          align-items: center;
+          justify-content: center;
+          content: "⎆";
+          margin-right: 0.5rem;
+        }
+      }
+    }
+    &:first-child::before {
+      content: "🏠";
+    }
+  }
 }
 
 section.md {
@@ -107,7 +172,8 @@ section.md {
   flex-direction: column;
 
   width: 100%;
-  max-width: 40rem;
+  max-width: 35rem;
+  padding: 1rem 2rem;
 }
 
 @for $i from 1 through 6 {
@@ -124,6 +190,9 @@ section.md {
   h#{$i}.md {
     color: $black;
     font-weight: bold;
+    // &:first-child {
+    //   margin-top: 0;
+    // }
   }
   @for $j from 1 through 6 {
     h#{$i}.md + h#{$j}.md {
@@ -171,48 +240,68 @@ a.md {
   color: $blue-darkest;
 }
 
-a.crumb {
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-  min-height: 40px;
-  color: $yellow-darkest;
-  @for $i from 0 through 10 {
-    &-#{$i} {
-      margin-left: #{$i}rem;
-      margin-right: #{$i / 3}rem;
-      &::before {
-        content: "↳";
-        display: block;
-        margin-right: 0.5rem;
-      }
-    }
-  }
-  &-0::before {
-    content: "🏠";
-  }
-}
-
-a.seeother {
+.seeother {
+  position: relative;
   display: flex;
   align-items: center;
   outline: none;
-  color: $yellow-darker;
-  font-size: 1.2rem;
   text-decoration: none;
-  border-radius: 0.5rem;
-  padding: 0.5rem;
+  overflow: hidden;
+  background: $yellow-lighter;
+  color: $yellow-darker;
+  border-radius: 0.6rem;
+
+  &__label {
+    display: block;
+    font-size: 1.2rem;
+    margin: 1px;
+    padding: 0.5rem 1rem;
+    position: relative;
+    z-index: 2;
+    margin-left: 0;
+    border-radius: 0.5rem;
+  }
+
+  & + span.md + & {
+    margin-top: 1rem;
+  }
+
   &::before {
     content: "⎆";
-    display: block;
-    margin-right: 0.5rem;
     color: $yellow-dark;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 1rem;
+    width: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+  }
+
+  &__label,
+  &::before {
+    transition: margin-left 100ms ease-in-out, left 100ms ease-in-out,
+      opacity 100ms ease-in-out;
   }
 
   &:hover,
   &:focus {
-    color: $white;
-    background: $yellow-darkest;
+    color: $yellow-darkest;
+  }
+  &:hover &__label,
+  &:focus &__label {
+    margin-left: 1rem;
+  }
+  &:hover::before,
+  &:focus::before {
+    left: 0;
+    opacity: 1;
+  }
+
+  &:active {
+    box-shadow: $inset-shadow;
   }
 }
 

@@ -26,20 +26,11 @@ fs.copyFileSync(
 );
 
 glob.sync(`${pwd}/**/*.md`).forEach(file => {
-  // console.log("---------");
-  // console.log(file);
-  // console.log("---");
-  // console.log(tree);
-  // console.log("---");
-  // console.log(outContents);
-
   const fileContents = fs.readFileSync(file, { encoding: "utf-8" });
   const parsed = markdown.parse(fileContents);
   const converted = convert(parsed, file);
-  const outContents = [
-    h("section", { class: "md" }, ...crumbs(file)),
-    converted
-  ].join("");
+  const navCrumbs = crumbs(file);
+  const outContents = [...(navCrumbs ? [navCrumbs] : []), converted].join("");
   if ((fileContents.split("\n")[0] || "").toLowerCase() === "debug") {
     console.log({ file, parsed, converted });
   }
@@ -194,27 +185,55 @@ function createCodeBlock(code) {
 
 function crumbs(file) {
   let dir = path.dirname(file);
-  const result = [];
+  const parents = [];
   while (dir.split(path.sep).length >= pwd.split(path.sep).length) {
     const target = path.resolve(dir, "./index.md");
     if (target !== file) {
       const link = getLink(file, path.relative(path.dirname(file), target));
       if (link) {
-        result.push(link);
+        parents.push(link);
       }
     }
     dir = path.resolve(dir, "..");
   }
-  return result.reverse().map((link, i) =>
-    h(
-      "a",
-      {
-        class: `crumb crumb-${i}`,
-        href: link.href
-      },
-      link.text
-    )
-  );
+  if (parents.length > 1) {
+    const parentsFromTopMost = parents.slice(0).reverse();
+    return h(
+      "details",
+      { class: "crumbs" },
+      h(
+        "summary",
+        { class: "crumbs__short" },
+        parentsFromTopMost.map(link => link.text).join(" / ")
+      ),
+      ...parentsFromTopMost.map(link =>
+        h(
+          "a",
+          {
+            class: `crumbs__item`,
+            href: link.href
+          },
+          link.text
+        )
+      )
+    );
+  }
+  if (parents.length === 1) {
+    return h(
+      "details",
+      { class: "crumbs", open: "" },
+      h("summary", { class: "crumbs__short crumbs__short--empty" }, ""),
+      h(
+        "a",
+        {
+          class: `crumbs__item`,
+          href: parents[0].href
+        },
+        parents[0].text
+      )
+    );
+  }
+  return "";
 }
 
 function createMDAnchor(from, to) {
@@ -232,7 +251,7 @@ function createMDAnchor(from, to) {
       class: "seeother",
       href: link.href
     },
-    convert(link.text, from)
+    h("span", { class: "seeother__label" }, convert(link.text, from))
   );
 }
 

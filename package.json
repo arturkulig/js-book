@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "node ./process.js",
+    "build": "rm -rf ./html; node ./process.js",
     "dev": "concurrently -n process,http \"nodemon -e js,md,scss ./process.js\" \"sleep 1; http-server ./html\""
   },
   "keywords": [],
